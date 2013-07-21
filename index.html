@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Metainspector by jaimeiniesta</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>Metainspector</h1>
+          <h2>Ruby gem for web scraping purposes.</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/jaimeiniesta/metainspector/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/jaimeiniesta/metainspector/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/jaimeiniesta/metainspector" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <p>MetaInspector is a gem for web scraping purposes. You give it an URL, and it lets you easily get its title, links, images, charset, description, keywords, meta tags...</p>
+
+<h2>
+<a name="see-it-in-action" class="anchor" href="#see-it-in-action"><span class="octicon octicon-link"></span></a>See it in action!</h2>
+
+<p>You can try MetaInspector live at this little demo: <a href="https://metainspectordemo.herokuapp.com">https://metainspectordemo.herokuapp.com</a></p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>Install the gem from RubyGems:</p>
+
+<pre><code>gem install metainspector
+</code></pre>
+
+<p>If you're using it on a Rails application, just add it to your Gemfile and run <code>bundle install</code></p>
+
+<pre><code>gem 'metainspector'
+</code></pre>
+
+<p>This gem is tested on Ruby versions 1.9.2 and 1.9.3.</p>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>Initialize a MetaInspector instance for an URL, like this:</p>
+
+<pre><code>page = MetaInspector.new('http://markupvalidator.com')
+</code></pre>
+
+<p>If you don't include the scheme on the URL, http:// will be used by default:</p>
+
+<pre><code>page = MetaInspector.new('markupvalidator.com')
+</code></pre>
+
+<p>You can also include the html which will be used as the document to scrape:</p>
+
+<pre><code>page = MetaInspector.new("http://markupvalidator.com", :document =&gt; "&lt;html&gt;&lt;head&gt;&lt;title&gt;Hello From Passed Html&lt;/title&gt;&lt;a href='/hello'&gt;Hello link&lt;/a&gt;&lt;/head&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;")
+</code></pre>
+
+<h2>
+<a name="accessing-scraped-data" class="anchor" href="#accessing-scraped-data"><span class="octicon octicon-link"></span></a>Accessing scraped data</h2>
+
+<p>Then you can see the scraped data like this:</p>
+
+<pre><code>page.url                # URL of the page
+page.scheme             # Scheme of the page (http, https)
+page.host               # Hostname of the page (like, markupvalidator.com, without the scheme)
+page.root_url           # Root url (scheme + host, like http://markupvalidator.com/)
+page.title              # title of the page, as string
+page.links              # array of strings, with every link found on the page as an absolute URL
+page.internal_links     # array of strings, with every internal link found on the page as an absolute URL
+page.external_links     # array of strings, with every external link found on the page as an absolute URL
+page.meta_description   # meta description, as string
+page.description        # returns the meta description, or the first long paragraph if no meta description is found
+page.meta_keywords      # meta keywords, as string
+page.image              # Most relevant image, if defined with og:image
+page.images             # array of strings, with every img found on the page as an absolute URL
+page.feed               # Get rss or atom links in meta data fields as array
+page.meta_og_title      # opengraph title
+page.meta_og_image      # opengraph image
+page.charset            # UTF-8
+page.content_type       # content-type returned by the server when the url was requested
+</code></pre>
+
+<p>MetaInspector uses dynamic methods for meta_tag discovery, so all these will work, and will be converted to a search of a meta tag by the corresponding name, and return its content attribute</p>
+
+<pre><code>page.meta_description   # &lt;meta name="description" content="..." /&gt;
+page.meta_keywords      # &lt;meta name="keywords" content="..." /&gt;
+page.meta_robots        # &lt;meta name="robots" content="..." /&gt;
+page.meta_generator     # &lt;meta name="generator" content="..." /&gt;
+</code></pre>
+
+<p>It will also work for the meta tags of the form , like the following:</p>
+
+<pre><code>page.meta_content_language  # &lt;meta http-equiv="content-language" content="..." /&gt;
+page.meta_Content_Type      # &lt;meta http-equiv="Content-Type" content="..." /&gt;
+</code></pre>
+
+<p>Please notice that MetaInspector is case sensitive, so <code>page.meta_Content_Type</code> is not the same as <code>page.meta_content_type</code></p>
+
+<p>You can also access most of the scraped data as a hash:</p>
+
+<pre><code>page.to_hash  # { "url"   =&gt; "http://markupvalidator.com",
+                  "title" =&gt; "MarkupValidator :: site-wide markup validation tool", ... }
+</code></pre>
+
+<p>The original document is accessible from:</p>
+
+<pre><code>page.document         # A String with the contents of the HTML document
+</code></pre>
+
+<p>And the full scraped document is accessible from:</p>
+
+<pre><code>page.parsed_document  # Nokogiri doc that you can use it to get any element from the page
+</code></pre>
+
+<h2>
+<a name="options" class="anchor" href="#options"><span class="octicon octicon-link"></span></a>Options</h2>
+
+<h3>
+<a name="timeout" class="anchor" href="#timeout"><span class="octicon octicon-link"></span></a>Timeout</h3>
+
+<p>By default, MetaInspector times out after 20 seconds of waiting for a page to respond.
+You can set a different timeout with a second parameter, like this:</p>
+
+<pre><code>page = MetaInspector.new('markupvalidator.com', :timeout =&gt; 5) # 5 seconds timeout
+</code></pre>
+
+<h3>
+<a name="redirections" class="anchor" href="#redirections"><span class="octicon octicon-link"></span></a>Redirections</h3>
+
+<p>By default, redirections from HTTP to HTTPS, and from HTTPS to HTTP are disallowed.</p>
+
+<p>However, you can tell MetaInspector to allow these redirections with the option <code>:allow_redirections</code>, like this:</p>
+
+<pre><code> # This will allow HTTP =&gt; HTTPS redirections
+ page = MetaInspector.new('facebook.com', :allow_redirections =&gt; :safe)
+
+ # And this will allow HTTP =&gt; HTTPS ("safe") and HTTPS =&gt; HTTP ("unsafe") redirections
+ page = MetaInspector.new('facebook.com', :allow_redirections =&gt; :all)
+</code></pre>
+
+<h3>
+<a name="html-content-only" class="anchor" href="#html-content-only"><span class="octicon octicon-link"></span></a>HTML Content Only</h3>
+
+<p>MetaInspector will try to parse all URLs by default. If you want to raise an error when trying to parse a non-html URL (one that has a content-type different than text/html), you can state it like this:</p>
+
+<pre><code>page = MetaInspector.new('markupvalidator.com', :html_content_only =&gt; true)
+</code></pre>
+
+<p>This is useful when using MetaInspector on web spidering. Although on the initial URL you'll probably have an HTML URL, following links you may find yourself trying to parse non-html URLs.</p>
+
+<pre><code>page = MetaInspector.new('http://example.com/image.png')
+page.title         # returns ""
+page.content_type  # "image/png"
+page.ok?           # true
+
+page = MetaInspector.new('http://example.com/image.png', :html_content_only =&gt; true)
+page.title         # returns nil
+page.content_type  # "image/png"
+page.ok?           # false
+page.errors.first  # "Scraping exception: The url provided contains image/png content instead of text/html content"
+</code></pre>
+
+<h2>
+<a name="error-handling" class="anchor" href="#error-handling"><span class="octicon octicon-link"></span></a>Error handling</h2>
+
+<p>You can check if the page has been succesfully parsed with:</p>
+
+<pre><code>page.ok?     # Will return true if everything looks OK
+</code></pre>
+
+<p>In case there have been any errors, you can check them with:</p>
+
+<pre><code>page.errors  # Will return an array with the error messages
+</code></pre>
+
+<p>If you also want to see the errors on console, you can initialize MetaInspector with the verbose option like that:</p>
+
+<pre><code>page = MetaInspector.new('http://example.com', :verbose =&gt; true)
+</code></pre>
+
+<h2>
+<a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples</h2>
+
+<p>You can find some sample scripts on the samples folder, including a basic scraping and a spider that will follow external links using a queue. What follows is an example of use from irb:</p>
+
+<pre><code>$ irb
+&gt;&gt; require 'metainspector'
+=&gt; true
+
+&gt;&gt; page = MetaInspector.new('http://markupvalidator.com')
+=&gt; #&lt;MetaInspector:0x11330c0 @url="http://markupvalidator.com"&gt;
+
+&gt;&gt; page.title
+=&gt; "MarkupValidator :: site-wide markup validation tool"
+
+&gt;&gt; page.meta_description
+=&gt; "Site-wide markup validation tool. Validate the markup of your whole site with just one click."
+
+&gt;&gt; page.meta_keywords
+=&gt; "html, markup, validation, validator, tool, w3c, development, standards, free"
+
+&gt;&gt; page.links.size
+=&gt; 15
+
+&gt;&gt; page.links[4]
+=&gt; "/plans-and-pricing"
+
+&gt;&gt; page.document.class
+=&gt; String
+
+&gt;&gt; page.parsed_document.class
+=&gt; Nokogiri::HTML::Document
+</code></pre>
+
+<h2>
+<a name="zomg-fork-thank-you" class="anchor" href="#zomg-fork-thank-you"><span class="octicon octicon-link"></span></a>ZOMG Fork! Thank you!</h2>
+
+<p>You're welcome to fork this project and send pull requests. Just remember to include specs.</p>
+
+<p>Thanks to all the contributors:</p>
+
+<p><a href="https://github.com/jaimeiniesta/metainspector/graphs/contributors">https://github.com/jaimeiniesta/metainspector/graphs/contributors</a></p>
+
+<h2>
+<a name="related-projects" class="anchor" href="#related-projects"><span class="octicon octicon-link"></span></a>Related projects</h2>
+
+<ul>
+<li>
+<a href="https://github.com/fern4lvarez/go-metainspector">go-metainspector</a>, a port of MetaInspector for Go.</li>
+<li>
+<a href="https://github.com/gabceb/node-metainspector">Node-MetaInspector</a>, a port of MetaInspector for Node.</li>
+</ul><h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>MetaInspector is released under the <a href="MIT-LICENSE">MIT license</a>.</p>
+        </section>
+
+        <footer>
+          Metainspector is maintained by <a href="https://github.com/jaimeiniesta">jaimeiniesta</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
