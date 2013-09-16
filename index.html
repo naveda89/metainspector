@@ -31,7 +31,11 @@
         <hr>
 
         <section id="main_content">
-          <p>MetaInspector is a gem for web scraping purposes. You give it an URL, and it lets you easily get its title, links, images, charset, description, keywords, meta tags...</p>
+          <h1>
+<a name="metainspector--" class="anchor" href="#metainspector--"><span class="octicon octicon-link"></span></a>MetaInspector <a href="http://travis-ci.org/jaimeiniesta/metainspector"><img src="https://secure.travis-ci.org/jaimeiniesta/metainspector.png" alt="Build Status"></a> <a href="https://gemnasium.com/jaimeiniesta/metainspector"><img src="https://gemnasium.com/jaimeiniesta/metainspector.png" alt="Dependency Status"></a>
+</h1>
+
+<p>MetaInspector is a gem for web scraping purposes. You give it an URL, and it lets you easily get its title, links, images, charset, description, keywords, meta tags...</p>
 
 <h2>
 <a name="see-it-in-action" class="anchor" href="#see-it-in-action"><span class="octicon octicon-link"></span></a>See it in action!</h2>
@@ -51,7 +55,7 @@
 <pre><code>gem 'metainspector'
 </code></pre>
 
-<p>This gem is tested on Ruby versions 1.9.2 and 1.9.3.</p>
+<p>This gem is tested on Ruby versions 1.9.2, 1.9.3 and 2.0.0.</p>
 
 <h2>
 <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
@@ -90,8 +94,6 @@ page.meta_keywords      # meta keywords, as string
 page.image              # Most relevant image, if defined with og:image
 page.images             # array of strings, with every img found on the page as an absolute URL
 page.feed               # Get rss or atom links in meta data fields as array
-page.meta_og_title      # opengraph title
-page.meta_og_image      # opengraph image
 page.charset            # UTF-8
 page.content_type       # content-type returned by the server when the url was requested
 </code></pre>
@@ -126,6 +128,29 @@ page.meta_Content_Type      # &lt;meta http-equiv="Content-Type" content="..." /
 <p>And the full scraped document is accessible from:</p>
 
 <pre><code>page.parsed_document  # Nokogiri doc that you can use it to get any element from the page
+</code></pre>
+
+<h2>
+<a name="opengraph-and-twitter-card-meta-tags" class="anchor" href="#opengraph-and-twitter-card-meta-tags"><span class="octicon octicon-link"></span></a>Opengraph and Twitter card meta tags</h2>
+
+<p>Twitter cards &amp; Open graph tags make it possible for you to attach media experiences to Tweets &amp; Facebook posts. Nowadays most of the content creators add these meta tags to headers to quickly identify content on the page. Sometimes these tags could be nested as well. For example when a site wants to provide information about primary image used on a page it could use</p>
+
+<pre><code>&lt;meta name="og:image" content="http://www.somedomain.com/assets/images/abc.jpeg"&gt;
+&lt;meta name="og:image:width" content="200"&gt;
+&lt;meta name="twitter:image" value="http://www.somedomain.com/assets/images/abc.jpeg"&gt;
+&lt;meta property="twitter:image:width" value="200"&gt;
+</code></pre>
+
+<p>Also many sites use name &amp; property, content &amp; value attributes interchangeably. Using MetaInspector accessing this information is as easy as -</p>
+
+<pre><code>page.meta_og_image 
+page.meta_twitter_image_width 
+</code></pre>
+
+<p>Note that MetaInspector gives priority to content over value. In other words if there is a tag of the form</p>
+
+<pre><code>&lt;meta property="og:something" value="100" content="real value"&gt;
+page.meta_og_something #=&gt; "real value"
 </code></pre>
 
 <h2>
