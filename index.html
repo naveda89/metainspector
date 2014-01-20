@@ -1,41 +1,43 @@
 <!DOCTYPE html>
 <html>
+
   <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <title>Metainspector by jaimeiniesta</title>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Metainspector : Ruby gem for web scraping purposes." />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Metainspector</title>
   </head>
 
   <body>
-    <div id="container">
-      <div class="inner">
 
-        <header>
-          <h1>Metainspector</h1>
-          <h2>Ruby gem for web scraping purposes.</h2>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/jaimeiniesta/metainspector">View on GitHub</a>
+
+          <h1 id="project_title">Metainspector</h1>
+          <h2 id="project_tagline">Ruby gem for web scraping purposes.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/jaimeiniesta/metainspector/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/jaimeiniesta/metainspector/tarball/master">Download this project as a tar.gz file</a>
+            </section>
         </header>
+    </div>
 
-        <section id="downloads" class="clearfix">
-          <a href="https://github.com/jaimeiniesta/metainspector/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
-          <a href="https://github.com/jaimeiniesta/metainspector/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
-          <a href="https://github.com/jaimeiniesta/metainspector" id="view-on-github" class="button"><span>View on GitHub</span></a>
-        </section>
-
-        <hr>
-
-        <section id="main_content">
-          <h1>
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
 <a name="metainspector--" class="anchor" href="#metainspector--"><span class="octicon octicon-link"></span></a>MetaInspector <a href="http://travis-ci.org/jaimeiniesta/metainspector"><img src="https://secure.travis-ci.org/jaimeiniesta/metainspector.png" alt="Build Status"></a> <a href="https://gemnasium.com/jaimeiniesta/metainspector"><img src="https://gemnasium.com/jaimeiniesta/metainspector.png" alt="Dependency Status"></a>
 </h1>
 
-<p>MetaInspector is a gem for web scraping purposes. You give it an URL, and it lets you easily get its title, links, images, charset, description, keywords, meta tags...</p>
+<p>MetaInspector is a gem for web scraping purposes.</p>
+
+<p>You give it an URL, and it lets you easily get its title, links, images, charset, description, keywords, meta tags...</p>
 
 <h2>
 <a name="see-it-in-action" class="anchor" href="#see-it-in-action"><span class="octicon octicon-link"></span></a>See it in action!</h2>
@@ -62,17 +64,17 @@
 
 <p>Initialize a MetaInspector instance for an URL, like this:</p>
 
-<pre><code>page = MetaInspector.new('http://markupvalidator.com')
+<pre><code>page = MetaInspector.new('http://sitevalidator.com')
 </code></pre>
 
 <p>If you don't include the scheme on the URL, http:// will be used by default:</p>
 
-<pre><code>page = MetaInspector.new('markupvalidator.com')
+<pre><code>page = MetaInspector.new('sitevalidator.com')
 </code></pre>
 
 <p>You can also include the html which will be used as the document to scrape:</p>
 
-<pre><code>page = MetaInspector.new("http://markupvalidator.com", :document =&gt; "&lt;html&gt;&lt;head&gt;&lt;title&gt;Hello From Passed Html&lt;/title&gt;&lt;a href='/hello'&gt;Hello link&lt;/a&gt;&lt;/head&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;")
+<pre><code>page = MetaInspector.new("http://sitevalidator.com", :document =&gt; "&lt;html&gt;&lt;head&gt;&lt;title&gt;Hello From Passed Html&lt;/title&gt;&lt;a href='/hello'&gt;Hello link&lt;/a&gt;&lt;/head&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;")
 </code></pre>
 
 <h2>
@@ -80,77 +82,148 @@
 
 <p>Then you can see the scraped data like this:</p>
 
-<pre><code>page.url                # URL of the page
-page.scheme             # Scheme of the page (http, https)
-page.host               # Hostname of the page (like, markupvalidator.com, without the scheme)
-page.root_url           # Root url (scheme + host, like http://markupvalidator.com/)
-page.title              # title of the page, as string
-page.links              # array of strings, with every link found on the page as an absolute URL
-page.internal_links     # array of strings, with every internal link found on the page as an absolute URL
-page.external_links     # array of strings, with every external link found on the page as an absolute URL
-page.meta_description   # meta description, as string
-page.description        # returns the meta description, or the first long paragraph if no meta description is found
-page.meta_keywords      # meta keywords, as string
-page.image              # Most relevant image, if defined with og:image
-page.images             # array of strings, with every img found on the page as an absolute URL
-page.feed               # Get rss or atom links in meta data fields as array
-page.charset            # UTF-8
-page.content_type       # content-type returned by the server when the url was requested
+<pre><code>page.url                 # URL of the page
+page.scheme              # Scheme of the page (http, https)
+page.host                # Hostname of the page (like, sitevalidator.com, without the scheme)
+page.root_url            # Root url (scheme + host, like http://sitevalidator.com/)
+page.title               # title of the page, as string
+page.links               # array of strings, with every link found on the page as an absolute URL
+page.internal_links      # array of strings, with every internal link found on the page as an absolute URL
+page.external_links      # array of strings, with every external link found on the page as an absolute URL
+page.meta['keywords']    # meta keywords, as string
+page.meta['description'] # meta description, as string
+page.description         # returns the meta description, or the first long paragraph if no meta description is found
+page.image               # Most relevant image, if defined with the og:image meta tag
+page.images              # array of strings, with every img found on the page as an absolute URL
+page.feed                # Get rss or atom links in meta data fields as array
+page.charset             # UTF-8
+page.content_type        # content-type returned by the server when the url was requested
 </code></pre>
 
-<p>MetaInspector uses dynamic methods for meta_tag discovery, so all these will work, and will be converted to a search of a meta tag by the corresponding name, and return its content attribute</p>
+<h2>
+<a name="meta-tags" class="anchor" href="#meta-tags"><span class="octicon octicon-link"></span></a>Meta tags</h2>
 
-<pre><code>page.meta_description   # &lt;meta name="description" content="..." /&gt;
-page.meta_keywords      # &lt;meta name="keywords" content="..." /&gt;
-page.meta_robots        # &lt;meta name="robots" content="..." /&gt;
-page.meta_generator     # &lt;meta name="generator" content="..." /&gt;
+<p>When it comes to meta tags, you have several options:</p>
+
+<pre><code>page.meta_tags          # Gives you all the meta tags by type:
+                        # (meta name, meta http-equiv, meta property and meta charset)
+                        # As meta tags can be repeated (in the case of 'og:image', for example),
+                        # the values returned will be arrays
+                        #
+                        # For example:
+                        #
+                        # {
+                            'name' =&gt; {
+                                        'keywords'       =&gt; ['one, two, three'],
+                                        'description'    =&gt; ['the description'],
+                                        'author'         =&gt; ['Joe Sample'],
+                                        'robots'         =&gt; ['index,follow'],
+                                        'revisit'        =&gt; ['15 days'],
+                                        'dc.date.issued' =&gt; ['2011-09-15']
+                                       },
+
+                            'http-equiv' =&gt; {
+                                              'content-type'        =&gt; ['text/html; charset=UTF-8'],
+                                              'content-style-type'  =&gt; ['text/css']
+                                            },
+
+                            'property' =&gt; {
+                                            'og:title'        =&gt; ['An OG title'],
+                                            'og:type'         =&gt; ['website'],
+                                            'og:url'          =&gt; ['http://example.com/meta-tags'],
+                                            'og:image'        =&gt; ['http://example.com/rock.jpg',
+                                                                  'http://example.com/rock2.jpg',
+                                                                  'http://example.com/rock3.jpg'],
+                                            'og:image:width'  =&gt; ['300'],
+                                            'og:image:height' =&gt; ['300', '1000']
+                                          },
+
+                            'charset' =&gt; ['UTF-8']
+                          }
 </code></pre>
 
-<p>It will also work for the meta tags of the form , like the following:</p>
+<p>As this method returns a hash, you can also take only the key that you need, like in:</p>
 
-<pre><code>page.meta_content_language  # &lt;meta http-equiv="content-language" content="..." /&gt;
-page.meta_Content_Type      # &lt;meta http-equiv="Content-Type" content="..." /&gt;
+<pre><code>page.meta_tags['property']  # Returns:
+                            # {
+                            #   'og:title'        =&gt; ['An OG title'],
+                            #   'og:type'         =&gt; ['website'],
+                            #   'og:url'          =&gt; ['http://example.com/meta-tags'],
+                            #   'og:image'        =&gt; ['http://example.com/rock.jpg',
+                            #                         'http://example.com/rock2.jpg',
+                            #                         'http://example.com/rock3.jpg'],
+                            #   'og:image:width'  =&gt; ['300'],
+                            #   'og:image:height' =&gt; ['300', '1000']
+                            # }
 </code></pre>
 
-<p>Please notice that MetaInspector is case sensitive, so <code>page.meta_Content_Type</code> is not the same as <code>page.meta_content_type</code></p>
+<p>In most cases you will only be interested in the first occurrence of a meta tag, so you can
+use the singular form of that method:</p>
+
+<pre><code>page.meta_tag['name']  # Returns:
+                       # {
+                       #   'keywords'       =&gt; 'one, two, three',
+                       #   'description'    =&gt; 'the description',
+                       #   'author'         =&gt; 'Joe Sample',
+                       #   'robots'         =&gt; 'index,follow',
+                       #   'revisit'        =&gt; '15 days',
+                       #   'dc.date.issued' =&gt; '2011-09-15'
+                       #  }
+</code></pre>
+
+<p>Or, as this is also a hash:</p>
+
+<pre><code>page.meta_tag['name']['keywords']    # Returns 'one, two, three'
+</code></pre>
+
+<p>And finally, you can use the shorter <code>meta</code> method that will merge the different keys so you have
+a simpler hash:</p>
+
+<pre><code>page.meta       # Returns:
+                #
+                # {
+                #     'keywords'            =&gt; 'one, two, three',
+                #     'description'         =&gt; 'the description',
+                #     'author'              =&gt; 'Joe Sample',
+                #     'robots'              =&gt; 'index,follow',
+                #     'revisit'             =&gt; '15 days',
+                #     'dc.date.issued'      =&gt; '2011-09-15',
+                #     'content-type'        =&gt; 'text/html; charset=UTF-8',
+                #     'content-style-type'  =&gt; 'text/css',
+                #     'og:title'            =&gt; 'An OG title',
+                #     'og:type'             =&gt; 'website',
+                #     'og:url'              =&gt; 'http://example.com/meta-tags',
+                #     'og:image'            =&gt; 'http://example.com/rock.jpg',
+                #     'og:image:width'      =&gt; '300',
+                #     'og:image:height'     =&gt; '300',
+                #     'charset'             =&gt; 'UTF-8'
+                #   }
+</code></pre>
+
+<p>This way, you can get most meta tags just like that:</p>
+
+<pre><code>page.meta['author']     # Returns "Joe Sample"
+</code></pre>
+
+<p>Please be aware that all keys are converted to downcase, so it's <code>'dc.date.issued'</code> and not <code>'DC.date.issued'</code>.</p>
+
+<h2>
+<a name="other-representations" class="anchor" href="#other-representations"><span class="octicon octicon-link"></span></a>Other representations</h2>
 
 <p>You can also access most of the scraped data as a hash:</p>
 
-<pre><code>page.to_hash  # { "url"   =&gt; "http://markupvalidator.com",
+<pre><code>page.to_hash  # { "url"   =&gt; "http://sitevalidator.com",
                   "title" =&gt; "MarkupValidator :: site-wide markup validation tool", ... }
 </code></pre>
 
 <p>The original document is accessible from:</p>
 
-<pre><code>page.document         # A String with the contents of the HTML document
+<pre><code>page.to_s         # A String with the contents of the HTML document
 </code></pre>
 
 <p>And the full scraped document is accessible from:</p>
 
-<pre><code>page.parsed_document  # Nokogiri doc that you can use it to get any element from the page
-</code></pre>
-
-<h2>
-<a name="opengraph-and-twitter-card-meta-tags" class="anchor" href="#opengraph-and-twitter-card-meta-tags"><span class="octicon octicon-link"></span></a>Opengraph and Twitter card meta tags</h2>
-
-<p>Twitter cards &amp; Open graph tags make it possible for you to attach media experiences to Tweets &amp; Facebook posts. Nowadays most of the content creators add these meta tags to headers to quickly identify content on the page. Sometimes these tags could be nested as well. For example when a site wants to provide information about primary image used on a page it could use</p>
-
-<pre><code>&lt;meta name="og:image" content="http://www.somedomain.com/assets/images/abc.jpeg"&gt;
-&lt;meta name="og:image:width" content="200"&gt;
-&lt;meta name="twitter:image" value="http://www.somedomain.com/assets/images/abc.jpeg"&gt;
-&lt;meta property="twitter:image:width" value="200"&gt;
-</code></pre>
-
-<p>Also many sites use name &amp; property, content &amp; value attributes interchangeably. Using MetaInspector accessing this information is as easy as -</p>
-
-<pre><code>page.meta_og_image 
-page.meta_twitter_image_width 
-</code></pre>
-
-<p>Note that MetaInspector gives priority to content over value. In other words if there is a tag of the form</p>
-
-<pre><code>&lt;meta property="og:something" value="100" content="real value"&gt;
-page.meta_og_something #=&gt; "real value"
+<pre><code>page.parsed  # Nokogiri doc that you can use it to get any element from the page
 </code></pre>
 
 <h2>
@@ -162,7 +235,7 @@ page.meta_og_something #=&gt; "real value"
 <p>By default, MetaInspector times out after 20 seconds of waiting for a page to respond.
 You can set a different timeout with a second parameter, like this:</p>
 
-<pre><code>page = MetaInspector.new('markupvalidator.com', :timeout =&gt; 5) # 5 seconds timeout
+<pre><code>page = MetaInspector.new('sitevalidator.com', :timeout =&gt; 5) # 5 seconds timeout
 </code></pre>
 
 <h3>
@@ -182,9 +255,9 @@ You can set a different timeout with a second parameter, like this:</p>
 <h3>
 <a name="html-content-only" class="anchor" href="#html-content-only"><span class="octicon octicon-link"></span></a>HTML Content Only</h3>
 
-<p>MetaInspector will try to parse all URLs by default. If you want to raise an error when trying to parse a non-html URL (one that has a content-type different than text/html), you can state it like this:</p>
+<p>MetaInspector will try to parse all URLs by default. If you want to raise an exception when trying to parse a non-html URL (one that has a content-type different than text/html), you can state it like this:</p>
 
-<pre><code>page = MetaInspector.new('markupvalidator.com', :html_content_only =&gt; true)
+<pre><code>page = MetaInspector.new('sitevalidator.com', :html_content_only =&gt; true)
 </code></pre>
 
 <p>This is useful when using MetaInspector on web spidering. Although on the initial URL you'll probably have an HTML URL, following links you may find yourself trying to parse non-html URLs.</p>
@@ -198,25 +271,31 @@ page = MetaInspector.new('http://example.com/image.png', :html_content_only =&gt
 page.title         # returns nil
 page.content_type  # "image/png"
 page.ok?           # false
-page.errors.first  # "Scraping exception: The url provided contains image/png content instead of text/html content"
+page.exceptions.first.message  # "The url provided contains image/png content instead of text/html content"
 </code></pre>
 
 <h2>
-<a name="error-handling" class="anchor" href="#error-handling"><span class="octicon octicon-link"></span></a>Error handling</h2>
+<a name="exception-handling" class="anchor" href="#exception-handling"><span class="octicon octicon-link"></span></a>Exception handling</h2>
 
 <p>You can check if the page has been succesfully parsed with:</p>
 
 <pre><code>page.ok?     # Will return true if everything looks OK
 </code></pre>
 
-<p>In case there have been any errors, you can check them with:</p>
+<p>In case there have been any exceptions, you can check them with:</p>
 
-<pre><code>page.errors  # Will return an array with the error messages
+<pre><code>page.exceptions  # Will return an array with the exceptions
 </code></pre>
 
-<p>If you also want to see the errors on console, you can initialize MetaInspector with the verbose option like that:</p>
+<p>You can also specify what to do when encountering an exception. By default it
+will store it, but you can also tell MetaInspector to warn about it on the log
+console, or to raise the exceptions, like this:</p>
 
-<pre><code>page = MetaInspector.new('http://example.com', :verbose =&gt; true)
+<pre><code># This will warn about the exception on console
+page = MetaInspector.new('http://example.com', warn_level: :warn)
+
+# This will raise the exception
+page = MetaInspector.new('http://example.com', warn_level: :raise)
 </code></pre>
 
 <h2>
@@ -228,16 +307,16 @@ page.errors.first  # "Scraping exception: The url provided contains image/png co
 &gt;&gt; require 'metainspector'
 =&gt; true
 
-&gt;&gt; page = MetaInspector.new('http://markupvalidator.com')
-=&gt; #&lt;MetaInspector:0x11330c0 @url="http://markupvalidator.com"&gt;
+&gt;&gt; page = MetaInspector.new('http://sitevalidator.com')
+=&gt; #&lt;MetaInspector:0x11330c0 @url="http://sitevalidator.com"&gt;
 
 &gt;&gt; page.title
 =&gt; "MarkupValidator :: site-wide markup validation tool"
 
-&gt;&gt; page.meta_description
+&gt;&gt; page.meta['description']
 =&gt; "Site-wide markup validation tool. Validate the markup of your whole site with just one click."
 
-&gt;&gt; page.meta_keywords
+&gt;&gt; page.meta['keywords']
 =&gt; "html, markup, validation, validator, tool, w3c, development, standards, free"
 
 &gt;&gt; page.links.size
@@ -245,12 +324,6 @@ page.errors.first  # "Scraping exception: The url provided contains image/png co
 
 &gt;&gt; page.links[4]
 =&gt; "/plans-and-pricing"
-
-&gt;&gt; page.document.class
-=&gt; String
-
-&gt;&gt; page.parsed_document.class
-=&gt; Nokogiri::HTML::Document
 </code></pre>
 
 <h2>
@@ -274,15 +347,18 @@ page.errors.first  # "Scraping exception: The url provided contains image/png co
 <a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
 
 <p>MetaInspector is released under the <a href="MIT-LICENSE">MIT license</a>.</p>
-        </section>
-
-        <footer>
-          Metainspector is maintained by <a href="https://github.com/jaimeiniesta">jaimeiniesta</a><br>
-          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
-        </footer>
-
-        
-      </div>
+      </section>
     </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Metainspector maintained by <a href="https://github.com/jaimeiniesta">jaimeiniesta</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
   </body>
 </html>
