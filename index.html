@@ -1,37 +1,34 @@
 <!DOCTYPE html>
 <html>
-
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Metainspector : Ruby gem for web scraping purposes." />
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
 
-    <title>Metainspector</title>
+    <title>Metainspector by jaimeiniesta</title>
   </head>
 
   <body>
+    <header>
+      <div class="inner">
+        <h1>Metainspector</h1>
+        <h2>Ruby gem for web scraping purposes.</h2>
+        <a href="https://github.com/jaimeiniesta/metainspector" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/jaimeiniesta/metainspector">View on GitHub</a>
-
-          <h1 id="project_title">Metainspector</h1>
-          <h2 id="project_tagline">Ruby gem for web scraping purposes.</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/jaimeiniesta/metainspector/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/jaimeiniesta/metainspector/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h1>
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
 <a name="metainspector--" class="anchor" href="#metainspector--"><span class="octicon octicon-link"></span></a>MetaInspector <a href="http://travis-ci.org/jaimeiniesta/metainspector"><img src="https://secure.travis-ci.org/jaimeiniesta/metainspector.png" alt="Build Status"></a> <a href="https://gemnasium.com/jaimeiniesta/metainspector"><img src="https://gemnasium.com/jaimeiniesta/metainspector.png" alt="Dependency Status"></a>
 </h1>
 
@@ -57,7 +54,7 @@
 <pre><code>gem 'metainspector'
 </code></pre>
 
-<p>This gem is tested on Ruby versions 1.9.2, 1.9.3 and 2.0.0.</p>
+<p>This gem is tested on Ruby versions 1.9.2, 1.9.3, 2.0.0 and 2.1.0.</p>
 
 <h2>
 <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
@@ -253,6 +250,20 @@ You can set a different timeout with a second parameter, like this:</p>
 </code></pre>
 
 <h3>
+<a name="headers" class="anchor" href="#headers"><span class="octicon octicon-link"></span></a>Headers</h3>
+
+<p>By default, the following headers are set:</p>
+
+<pre><code>{'User-Agent' =&gt; "MetaInspector/#{MetaInspector::VERSION} (+https://github.com/jaimeiniesta/metainspector)"}
+</code></pre>
+
+<p>If you want to set custom headers then use the <code>headers</code> option:</p>
+
+<pre><code> # Set the User-Agent header
+ page = MetaInspector.new('example.com', :headers =&gt; {'User-Agent' =&gt; 'My custom User-Agent'})
+</code></pre>
+
+<h3>
 <a name="html-content-only" class="anchor" href="#html-content-only"><span class="octicon octicon-link"></span></a>HTML Content Only</h3>
 
 <p>MetaInspector will try to parse all URLs by default. If you want to raise an exception when trying to parse a non-html URL (one that has a content-type different than text/html), you can state it like this:</p>
@@ -263,40 +274,24 @@ You can set a different timeout with a second parameter, like this:</p>
 <p>This is useful when using MetaInspector on web spidering. Although on the initial URL you'll probably have an HTML URL, following links you may find yourself trying to parse non-html URLs.</p>
 
 <pre><code>page = MetaInspector.new('http://example.com/image.png')
-page.title         # returns ""
 page.content_type  # "image/png"
-page.ok?           # true
+page.description   # will returned a garbled string
 
 page = MetaInspector.new('http://example.com/image.png', :html_content_only =&gt; true)
-page.title         # returns nil
 page.content_type  # "image/png"
-page.ok?           # false
-page.exceptions.first.message  # "The url provided contains image/png content instead of text/html content"
+page.description   # raises an exception
 </code></pre>
 
 <h2>
 <a name="exception-handling" class="anchor" href="#exception-handling"><span class="octicon octicon-link"></span></a>Exception handling</h2>
 
-<p>You can check if the page has been succesfully parsed with:</p>
+<p>By default, MetaInspector will raise the exceptions found. We think that this is the safest default: in case the URL you're trying to scrape is unreachable, you should clearly be notified, and treat the exception as needed in your app.</p>
 
-<pre><code>page.ok?     # Will return true if everything looks OK
-</code></pre>
+<p>However, if you prefer you can also set the <code>warn_level: :warn</code> option, so that exceptions found will just be warned on the standard output, instead of being raised.</p>
 
-<p>In case there have been any exceptions, you can check them with:</p>
+<p>You can also set the <code>warn_level: :store</code> option so that exceptions found will be silenced, and left for you to inspect on <code>page.exceptions</code>. You can also ask for <code>page.ok?</code>, wich will return <code>true</code> if no exceptions are stored.</p>
 
-<pre><code>page.exceptions  # Will return an array with the exceptions
-</code></pre>
-
-<p>You can also specify what to do when encountering an exception. By default it
-will store it, but you can also tell MetaInspector to warn about it on the log
-console, or to raise the exceptions, like this:</p>
-
-<pre><code># This will warn about the exception on console
-page = MetaInspector.new('http://example.com', warn_level: :warn)
-
-# This will raise the exception
-page = MetaInspector.new('http://example.com', warn_level: :raise)
-</code></pre>
+<p>You should avoid using the <code>:store</code> option, or use it wisely, as silencing errors can be problematic, it's always better to face the errors and treat them accordingly.</p>
 
 <h2>
 <a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples</h2>
@@ -347,18 +342,25 @@ page = MetaInspector.new('http://example.com', warn_level: :raise)
 <a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
 
 <p>MetaInspector is released under the <a href="MIT-LICENSE">MIT license</a>.</p>
-      </section>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/jaimeiniesta/metainspector/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/jaimeiniesta/metainspector/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/jaimeiniesta/metainspector"></a> is maintained by <a href="https://github.com/jaimeiniesta">jaimeiniesta</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
     </div>
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Metainspector maintained by <a href="https://github.com/jaimeiniesta">jaimeiniesta</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-    
-
+  
   </body>
 </html>
