@@ -61,19 +61,8 @@ module MetaInspector
       meta['description'] || secondary_description
     end
 
-    # Links found on the page, as absolute URLs
     def links
-      @links ||= parsed_links.map{ |l| URL.absolutify(URL.unrelativize(l, scheme), base_url) }.compact.uniq
-    end
-
-    # Internal links found on the page, as absolute URLs
-    def internal_links
-      @internal_links ||= links.select {|link| URL.new(link).host == host }
-    end
-
-    # External links found on the page, as absolute URLs
-    def external_links
-      @external_links ||= links.select {|link| URL.new(link).host != host }
+      { 'internal' => internal_links, 'external' => external_links, 'non_http' => non_http_links}
     end
 
     # Images found on the page, as absolute URLs
@@ -138,6 +127,27 @@ module MetaInspector
 
     def parsed_links
       @parsed_links ||= cleanup_nokogiri_values(parsed_search("//a/@href"))
+    end
+
+    def absolute_links
+      @absolute_links ||= parsed_links.map { |l| URL.absolutify(URL.unrelativize(l, scheme), base_url) }
+                                      .compact.uniq
+    end
+
+    def http_links
+      @http_links ||= absolute_links.select {|l| l =~ /^http(s)?:\/\//i}
+    end
+
+    def non_http_links
+      @non_http_links ||= absolute_links.select {|l| l !~ /^http(s)?:\/\//i}
+    end
+
+    def internal_links
+      @internal_links ||= http_links.select {|link| URL.new(link).host == host }
+    end
+
+    def external_links
+      @external_links ||= http_links.select {|link| URL.new(link).host != host }
     end
 
     def parsed_images
